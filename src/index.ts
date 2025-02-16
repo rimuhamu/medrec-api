@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { serve } from '@hono/node-server';
 import app from './app.js';
 
