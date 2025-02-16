@@ -4,7 +4,12 @@ import pretty from 'pino-pretty';
 
 export function pLogger() {
   return pinoLogger({
-    pino: pino(process.env.NODE_ENV === 'production' ? undefined : pretty()),
+    pino: pino.default(
+      {
+        level: process.env.LOG_LEVEL || 'info',
+      },
+      process.env.NODE_ENV === 'production' ? undefined : pretty()
+    ),
     http: {
       reqId: () => crypto.randomUUID(),
     },
