@@ -2,7 +2,6 @@ import type { AppOpenAPI } from './types.ts';
 
 import packageJSON from '../../package.json';
 import { apiReference } from '@scalar/hono-api-reference';
-import { trace } from 'console';
 
 export default function configureOpenAPI(app: AppOpenAPI) {
   app.doc('/doc', {

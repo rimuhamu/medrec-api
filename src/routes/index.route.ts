@@ -2,6 +2,7 @@ import { createRouter } from '@/lib/create-app';
 import { createRoute } from '@hono/zod-openapi';
 import { jsonContent } from 'stoker/openapi/helpers';
 import { createMessageObjectSchema } from 'stoker/openapi/schemas';
+import * as HttpStatusCodes from 'stoker/http-status-codes';
 
 const router = createRouter().openapi(
   createRoute({
@@ -9,7 +10,7 @@ const router = createRouter().openapi(
     method: 'get',
     path: '/',
     responses: {
-      200: jsonContent(
+      [HttpStatusCodes.OK]: jsonContent(
         createMessageObjectSchema('Medrec API'),
         'Medrec API Index'
       ),
@@ -20,7 +21,7 @@ const router = createRouter().openapi(
       {
         message: 'Medrec API',
       },
-      200
+      HttpStatusCodes.OK
     );
   }
 );
