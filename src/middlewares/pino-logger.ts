@@ -1,9 +1,6 @@
-import { config } from 'dotenv';
 import { pinoLogger } from 'hono-pino';
 import pino from 'pino';
 import pretty from 'pino-pretty';
-
-config();
 
 export function pLogger() {
   return pinoLogger({

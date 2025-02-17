@@ -3,8 +3,9 @@ import { notFound, onError } from 'stoker/middlewares';
 import { pLogger } from './middlewares/pino-logger.js';
 import type { PinoLogger } from 'hono-pino';
 import { config } from 'dotenv';
+import { expand } from 'dotenv-expand';
 
-config();
+expand(config());
 
 type AppBindings = {
   Variables: {
