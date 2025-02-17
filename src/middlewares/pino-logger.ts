@@ -1,3 +1,4 @@
+import env from '@/env.ts';
 import { pinoLogger } from 'hono-pino';
 import pino from 'pino';
 import pretty from 'pino-pretty';
@@ -6,7 +7,7 @@ export function pLogger() {
   return pinoLogger({
     pino: pino.default(
       {
-        level: process.env.LOG_LEVEL || 'info',
+        level: env.LOG_LEVEL || 'info',
       },
       process.env.NODE_ENV === 'production' ? undefined : pretty()
     ),
