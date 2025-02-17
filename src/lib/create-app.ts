@@ -4,10 +4,12 @@ import { pLogger } from '@/middlewares/pino-logger.ts';
 
 import type { AppBindings } from './types.ts';
 
-export default function createApp() {
-  const app = new OpenAPIHono<AppBindings>();
+export function createRouter() {
+  return new OpenAPIHono<AppBindings>({ strict: false });
+}
 
-  app.use(pLogger());
+export default function createApp() {
+  const app = createRouter();
 
   app.notFound(notFound);
   app.onError(onError);

@@ -5,7 +5,7 @@ import pretty from 'pino-pretty';
 
 export function pLogger() {
   return pinoLogger({
-    pino: pino.default(
+    pino: pino(
       {
         level: env.LOG_LEVEL || 'info',
       },
