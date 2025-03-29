@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { timestamps } from '@/lib/columns.helpers';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const patients = sqliteTable('patients', {
@@ -6,22 +6,18 @@ export const patients = sqliteTable('patients', {
   name: text('name').notNull(),
   age: integer('age'),
   address: text('address').notNull(),
-  phoneNumber: integer('phone_numnber').notNull(),
+  phoneNumber: text('phone_number').notNull(),
   nextAppointment: text('next_appointment'),
+  ...timestamps,
 });
 
 export const diagnosticTestResult = sqliteTable('diagnostic_test_result', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   result: text('result'),
-  createdAt: text('created_at')
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .notNull(),
-  updateAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date()
-  ),
   patientId: integer('patient_id')
     .notNull()
     .references(() => patients.id, { onDelete: 'cascade' }),
+  ...timestamps,
 });
 
 export const medication = sqliteTable('medication', {
@@ -30,12 +26,10 @@ export const medication = sqliteTable('medication', {
   dosage: text('dosage'),
   frequency: text('frequency'),
   duration: text('duration'),
-  createdAt: text('created_at')
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .notNull(),
   patientId: integer('patient_id')
     .notNull()
     .references(() => patients.id, { onDelete: 'cascade' }),
+  ...timestamps,
 });
 
 export const medicalHistory = sqliteTable('medical_history', {
@@ -44,10 +38,8 @@ export const medicalHistory = sqliteTable('medical_history', {
   allergies: text('allergies'),
   surgeries: text('surgeries'),
   treatments: text('treatments'),
-  createdAt: text('created_at')
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .notNull(),
   patientId: integer('patient_id')
     .notNull()
     .references(() => patients.id, { onDelete: 'cascade' }),
+  ...timestamps,
 });
