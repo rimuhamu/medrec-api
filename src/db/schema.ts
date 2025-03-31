@@ -61,3 +61,5 @@ export const insertPatientsSchema = createInsertSchema(patients, {
   createdAt: true,
   updatedAt: true,
 });
+
+export const patchPatientsSchema = insertPatientsSchema.partial();
