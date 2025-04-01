@@ -4,6 +4,7 @@ import type {
   GetOneRoute,
   ListRoute,
   PatchRoute,
+  RemoveRoute,
 } from './patients.routes';
 import * as HttpStatusCodes from 'stoker/http-status-codes';
 import * as HttpStatusPhrases from 'stoker/http-status-phrases';
@@ -57,4 +58,18 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
       HttpStatusCodes.NOT_FOUND
     );
   return c.json(patient, HttpStatusCodes.OK);
+};
+
+export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
+  const { id } = c.req.valid('param');
+  const result = await db.delete(patients).where(eq(patients.id, id));
+
+  if (result.rowsAffected === 0)
+    return c.json(
+      {
+        message: HttpStatusPhrases.NOT_FOUND,
+      },
+      HttpStatusCodes.NOT_FOUND
+    );
+  return c.body(null, HttpStatusCodes.NO_CONTENT);
 };
