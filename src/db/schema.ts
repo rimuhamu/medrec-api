@@ -1,4 +1,5 @@
 import { timestamps } from '@/lib/columns.helpers';
+import { relations } from 'drizzle-orm';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
@@ -12,7 +13,7 @@ export const patients = sqliteTable('patients', {
   ...timestamps,
 });
 
-export const diagnosticTestResult = sqliteTable('diagnostic_test_result', {
+export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   result: text('result'),
   patientId: integer('patient_id')
@@ -21,7 +22,7 @@ export const diagnosticTestResult = sqliteTable('diagnostic_test_result', {
   ...timestamps,
 });
 
-export const medication = sqliteTable('medication', {
+export const medications = sqliteTable('medication', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name'),
   dosage: text('dosage'),
@@ -33,7 +34,7 @@ export const medication = sqliteTable('medication', {
   ...timestamps,
 });
 
-export const medicalHistory = sqliteTable('medical_history', {
+export const medicalHistories = sqliteTable('medical_history', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   medicalConditions: text('medical_conditions'),
   allergies: text('allergies'),
@@ -45,6 +46,7 @@ export const medicalHistory = sqliteTable('medical_history', {
   ...timestamps,
 });
 
+/** PATIENTS */
 export const selectPatientsSchema = createSelectSchema(patients);
 
 export const insertPatientsSchema = createInsertSchema(patients, {
@@ -52,7 +54,7 @@ export const insertPatientsSchema = createInsertSchema(patients, {
   age: (schema) => schema.gte(0).lte(100),
   address: (schema) => schema.min(10),
   phoneNumber: (schema) => schema.startsWith('08').min(10),
-  nextAppointment: (schema) => schema.date(),
+  nextAppointment: (schema) => schema.date(), //ex: "2025-05-29"
 }).omit({
   id: true,
   createdAt: true,
@@ -60,3 +62,20 @@ export const insertPatientsSchema = createInsertSchema(patients, {
 });
 
 export const patchPatientsSchema = insertPatientsSchema.partial();
+
+/** MEDICATION */
+export const selectMedicationsSchema = createSelectSchema(medications);
+
+export const insertMedicationsSchema = createInsertSchema(medications, {
+  name: (schema) => schema.min(1),
+  dosage: (schema) => schema.min(1),
+  frequency: (schema) => schema.min(1),
+  duration: (schema) => schema.min(1),
+  patientId: (schema) => schema.int().positive(),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchMedicationsSchema = insertMedicationsSchema.partial();
