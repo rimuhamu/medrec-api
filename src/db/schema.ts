@@ -13,6 +13,12 @@ export const patients = sqliteTable('patients', {
   ...timestamps,
 });
 
+export const patientsRelations = relations(patients, ({ many }) => ({
+  diagnosticTestResults: many(diagnosticTestResults),
+  medications: many(medications),
+  medicalHistories: many(medicalHistories),
+}));
+
 export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   result: text('result'),
@@ -21,6 +27,16 @@ export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
     .references(() => patients.id, { onDelete: 'cascade' }),
   ...timestamps,
 });
+
+export const diagnosticTestResultsRelations = relations(
+  diagnosticTestResults,
+  ({ one }) => ({
+    patient: one(patients, {
+      fields: [diagnosticTestResults.patientId],
+      references: [patients.id],
+    }),
+  })
+);
 
 export const medications = sqliteTable('medication', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -34,6 +50,13 @@ export const medications = sqliteTable('medication', {
   ...timestamps,
 });
 
+export const medicationsRelations = relations(medications, ({ one }) => ({
+  patient: one(patients, {
+    fields: [medications.patientId],
+    references: [patients.id],
+  }),
+}));
+
 export const medicalHistories = sqliteTable('medical_history', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   medicalConditions: text('medical_conditions'),
@@ -45,6 +68,16 @@ export const medicalHistories = sqliteTable('medical_history', {
     .references(() => patients.id, { onDelete: 'cascade' }),
   ...timestamps,
 });
+
+export const medicalHistoriesRelations = relations(
+  medicalHistories,
+  ({ one }) => ({
+    patient: one(patients, {
+      fields: [medicalHistories.patientId],
+      references: [patients.id],
+    }),
+  })
+);
 
 /** PATIENTS */
 export const selectPatientsSchema = createSelectSchema(patients);
