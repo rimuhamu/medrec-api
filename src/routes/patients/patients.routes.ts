@@ -50,7 +50,12 @@ export const getOne = createRoute({
   path: '/patients/{id}',
   method: 'get',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+    }),
   },
   tags,
   responses: {
@@ -73,7 +78,12 @@ export const patch = createRoute({
   path: '/patients/{id}',
   method: 'patch',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+    }),
     body: jsonContentRequired(patchPatientsSchema, 'The patient updates'),
   },
   tags,
@@ -100,7 +110,12 @@ export const remove = createRoute({
   path: '/patients/{id}',
   method: 'delete',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+    }),
   },
   tags,
   responses: {

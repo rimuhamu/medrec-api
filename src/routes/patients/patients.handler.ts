@@ -18,13 +18,13 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
-  const patient = c.req.valid('json');
+  const patient = await c.req.json();
   const [inserted] = await db.insert(patients).values(patient).returning();
   return c.json(inserted, HttpStatusCodes.CREATED);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
-  const { id } = c.req.valid('param');
+  const id = parseInt(c.req.param('id'));
   const patient = await db.query.patients.findFirst({
     where(fields, operator) {
       return operator.eq(fields.id, id);
@@ -42,8 +42,8 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
-  const { id } = c.req.valid('param');
-  const updates = c.req.valid('json');
+  const id = parseInt(c.req.param('id'));
+  const updates = await c.req.json();
   const [patient] = await db
     .update(patients)
     .set(updates)
@@ -61,7 +61,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
-  const { id } = c.req.valid('param');
+  const id = parseInt(c.req.param('id'));
   const result = await db.delete(patients).where(eq(patients.id, id));
 
   if (result.rowsAffected === 0)
