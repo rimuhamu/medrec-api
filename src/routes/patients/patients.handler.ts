@@ -20,7 +20,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const patient = c.req.valid('json');
   const [inserted] = await db.insert(patients).values(patient).returning();
-  return c.json(inserted, HttpStatusCodes.OK);
+  return c.json(inserted, HttpStatusCodes.CREATED);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {

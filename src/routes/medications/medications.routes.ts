@@ -20,7 +20,12 @@ export const list = createRoute({
   method: 'get',
   tags,
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+    }),
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -34,7 +39,12 @@ export const create = createRoute({
   path: '/patients/{patientId}/medications',
   method: 'post',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+    }),
     body: jsonContentRequired(
       insertMedicationsSchema,
       'The medications to create'
@@ -58,8 +68,14 @@ export const getOne = createRoute({
   method: 'get',
   request: {
     params: z.object({
-      patientId: IdParamsSchema,
-      id: IdParamsSchema,
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+      id: z.string().openapi({
+        description: 'Medication ID',
+        example: '1',
+      }),
     }),
   },
   tags,
@@ -84,8 +100,14 @@ export const patch = createRoute({
   method: 'patch',
   request: {
     params: z.object({
-      patientId: IdParamsSchema,
-      id: IdParamsSchema,
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+      id: z.string().openapi({
+        description: 'Medication ID',
+        example: '1',
+      }),
     }),
     body: jsonContentRequired(patchMedicationsSchema, 'The medication updates'),
   },
@@ -114,8 +136,14 @@ export const remove = createRoute({
   method: 'delete',
   request: {
     params: z.object({
-      patientId: IdParamsSchema,
-      id: IdParamsSchema,
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+      id: z.string().openapi({
+        description: 'Medication ID',
+        example: '1',
+      }),
     }),
   },
   tags,

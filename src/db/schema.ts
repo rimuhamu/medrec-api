@@ -20,7 +20,7 @@ export const patientsRelations = relations(patients, ({ many }) => ({
 }));
 
 export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   result: text('result'),
   patientId: integer('patient_id')
     .notNull()
@@ -39,7 +39,7 @@ export const diagnosticTestResultsRelations = relations(
 );
 
 export const medications = sqliteTable('medication', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name'),
   dosage: text('dosage'),
   frequency: text('frequency'),
@@ -58,7 +58,7 @@ export const medicationsRelations = relations(medications, ({ one }) => ({
 }));
 
 export const medicalHistories = sqliteTable('medical_history', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   medicalConditions: text('medical_conditions'),
   allergies: text('allergies'),
   surgeries: text('surgeries'),

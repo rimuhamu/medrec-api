@@ -25,11 +25,12 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const patientId = parseInt(c.req.param('patientId'));
   const data = await c.req.json();
-
+  console.log(patientId);
   const [medication] = await db
     .insert(medications)
     .values({ ...data, patientId })
     .returning();
+  console.log('MEDICATION CREATED');
 
   return c.json(medication, HttpStatusCodes.CREATED);
 };
