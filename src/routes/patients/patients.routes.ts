@@ -35,9 +35,9 @@ export const create = createRoute({
   },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
+    [HttpStatusCodes.CREATED]: jsonContent(
       selectPatientsSchema,
-      'The selected patient'
+      'The created patient'
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(insertPatientsSchema),

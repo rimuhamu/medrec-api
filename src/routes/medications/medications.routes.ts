@@ -16,9 +16,12 @@ import { createErrorSchema, IdParamsSchema } from 'stoker/openapi/schemas';
 const tags = ['Medications'];
 
 export const list = createRoute({
-  path: '/medications',
+  path: '/patients/{patientId}/medications',
   method: 'get',
   tags,
+  request: {
+    params: IdParamsSchema,
+  },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.array(selectMedicationsSchema),
@@ -28,9 +31,10 @@ export const list = createRoute({
 });
 
 export const create = createRoute({
-  path: '/medications',
+  path: '/patients/{patientId}/medications',
   method: 'post',
   request: {
+    params: IdParamsSchema,
     body: jsonContentRequired(
       insertMedicationsSchema,
       'The medications to create'
@@ -38,9 +42,9 @@ export const create = createRoute({
   },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
+    [HttpStatusCodes.CREATED]: jsonContent(
       selectMedicationsSchema,
-      'The selected medication'
+      'The created medication'
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(insertMedicationsSchema),
@@ -50,10 +54,13 @@ export const create = createRoute({
 });
 
 export const getOne = createRoute({
-  path: '/medications/{id}',
+  path: '/patients/{patientId}/medications/{id}',
   method: 'get',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: IdParamsSchema,
+      id: IdParamsSchema,
+    }),
   },
   tags,
   responses: {
@@ -73,10 +80,13 @@ export const getOne = createRoute({
 });
 
 export const patch = createRoute({
-  path: '/medications/{id}',
+  path: '/patients/{patientId}/medications/{id}',
   method: 'patch',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: IdParamsSchema,
+      id: IdParamsSchema,
+    }),
     body: jsonContentRequired(patchMedicationsSchema, 'The medication updates'),
   },
   tags,
@@ -100,10 +110,13 @@ export const patch = createRoute({
 });
 
 export const remove = createRoute({
-  path: '/medications/{id}',
+  path: '/patients/{patientId}/medications/{id}',
   method: 'delete',
   request: {
-    params: IdParamsSchema,
+    params: z.object({
+      patientId: IdParamsSchema,
+      id: IdParamsSchema,
+    }),
   },
   tags,
   responses: {
