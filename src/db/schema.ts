@@ -79,7 +79,7 @@ export const medicalHistoriesRelations = relations(
   })
 );
 
-/** PATIENTS */
+/** PATIENT */
 export const selectPatientsSchema = createSelectSchema(patients);
 
 export const insertPatientsSchema = createInsertSchema(patients, {
@@ -112,3 +112,21 @@ export const insertMedicationsSchema = createInsertSchema(medications, {
 });
 
 export const patchMedicationsSchema = insertMedicationsSchema.partial();
+
+/** MEDICAL HISTORY */
+export const selectMedicalHistoriesSchema =
+  createSelectSchema(medicalHistories);
+
+export const insertMedicalHistoriesSchema = createInsertSchema(
+  medicalHistories,
+  {
+    patientId: (schema) => schema.int().positive(),
+  }
+).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchMedicalHistoriesSchema =
+  insertMedicalHistoriesSchema.partial();
