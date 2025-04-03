@@ -96,6 +96,26 @@ export const insertPatientsSchema = createInsertSchema(patients, {
 
 export const patchPatientsSchema = insertPatientsSchema.partial();
 
+/** DIAGNOSTIC TEST RESULT */
+export const selectDiagnosticTestResultsSchema = createSelectSchema(
+  diagnosticTestResults
+);
+
+export const insertDiagnosticTestResultsSchema = createInsertSchema(
+  diagnosticTestResults,
+  {
+    result: (schema) => schema.min(1).max(300),
+    patientId: (schema) => schema.int().positive(),
+  }
+).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchDiagnosticTestResultsSchema =
+  insertDiagnosticTestResultsSchema.partial();
+
 /** MEDICATION */
 export const selectMedicationsSchema = createSelectSchema(medications);
 

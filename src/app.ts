@@ -4,6 +4,7 @@ import index from '@/routes/index.route';
 import patientsRouter from '@/routes/patients/patients.index.ts';
 import medicationsRouter from '@/routes/medications/medications.index.ts';
 import medicalHistoriesRouter from '@/routes/medical-histories/medical-histories.index.ts';
+import diagnosticTestResultsRouter from '@/routes/diagnostic-test-results/diagnostic-test-results.index.ts';
 
 const app = createApp();
 
@@ -12,6 +13,7 @@ const routes = [
   patientsRouter,
   medicationsRouter,
   medicalHistoriesRouter,
+  diagnosticTestResultsRouter,
 ];
 
 configureOpenAPI(app);
