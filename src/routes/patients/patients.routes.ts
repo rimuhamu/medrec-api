@@ -51,7 +51,7 @@ export const getOne = createRoute({
   method: 'get',
   request: {
     params: z.object({
-      patientId: z.string().openapi({
+      id: z.string().openapi({
         description: 'Patient ID',
         example: '1',
       }),
@@ -79,7 +79,7 @@ export const patch = createRoute({
   method: 'patch',
   request: {
     params: z.object({
-      patientId: z.string().openapi({
+      id: z.string().openapi({
         description: 'Patient ID',
         example: '1',
       }),
@@ -111,7 +111,7 @@ export const remove = createRoute({
   method: 'delete',
   request: {
     params: z.object({
-      patientId: z.string().openapi({
+      id: z.string().openapi({
         description: 'Patient ID',
         example: '1',
       }),

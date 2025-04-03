@@ -105,10 +105,10 @@ export const insertDiagnosticTestResultsSchema = createInsertSchema(
   diagnosticTestResults,
   {
     result: (schema) => schema.min(1).max(300),
-    patientId: (schema) => schema.int().positive(),
   }
 ).omit({
   id: true,
+  patientId: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -124,9 +124,9 @@ export const insertMedicationsSchema = createInsertSchema(medications, {
   dosage: (schema) => schema.min(1),
   frequency: (schema) => schema.min(1),
   duration: (schema) => schema.min(1),
-  patientId: (schema) => schema.int().positive(),
 }).omit({
   id: true,
+  patientId: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -140,10 +140,14 @@ export const selectMedicalHistoriesSchema =
 export const insertMedicalHistoriesSchema = createInsertSchema(
   medicalHistories,
   {
-    patientId: (schema) => schema.int().positive(),
+    medicalConditions: (schema) => schema.min(1).max(50),
+    allergies: (schema) => schema.min(1).max(50),
+    surgeries: (schema) => schema.min(1).max(50),
+    treatments: (schema) => schema.min(1).max(50),
   }
 ).omit({
   id: true,
+  patientId: true,
   createdAt: true,
   updatedAt: true,
 });

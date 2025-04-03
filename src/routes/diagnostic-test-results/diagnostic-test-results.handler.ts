@@ -25,11 +25,12 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const patientId = parseInt(c.req.param('patientId'));
   const data = await c.req.json();
-  console.log(patientId);
+  console.log('patientId from URL params:', patientId);
   const [diagnosticTestResult] = await db
     .insert(diagnosticTestResults)
     .values({ ...data, patientId })
     .returning();
+  console.log(patientId, diagnosticTestResult.patientId);
   console.log('DIAGNOSTIC TEST RESULT CREATED', diagnosticTestResult);
 
   return c.json(diagnosticTestResult, HttpStatusCodes.CREATED);
