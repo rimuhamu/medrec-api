@@ -21,6 +21,7 @@ export const patientsRelations = relations(patients, ({ many }) => ({
 
 export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  title: text('title'),
   result: text('result'),
   patientId: integer('patient_id')
     .notNull()
@@ -104,6 +105,7 @@ export const selectDiagnosticTestResultsSchema = createSelectSchema(
 export const insertDiagnosticTestResultsSchema = createInsertSchema(
   diagnosticTestResults,
   {
+    title: (schema) => schema.min(1).max(30),
     result: (schema) => schema.min(1).max(300),
   }
 ).omit({
