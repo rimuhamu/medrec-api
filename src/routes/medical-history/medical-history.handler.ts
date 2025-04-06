@@ -5,18 +5,18 @@ import type {
   ListRoute,
   PatchRoute,
   RemoveRoute,
-} from './medical-histories.routes';
+} from './medical-history.routes';
 import * as HttpStatusCodes from 'stoker/http-status-codes';
 import * as HttpStatusPhrases from 'stoker/http-status-phrases';
 import type { AppRouteHandler } from '@/lib/types';
-import { medicalHistories } from '@/db/schema';
+import { medicalHistory } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const patientId = parseInt(c.req.param('patientId'));
 
-  const result = await db.query.medicalHistories.findMany({
-    where: eq(medicalHistories.patientId, patientId),
+  const result = await db.query.medicalHistory.findMany({
+    where: eq(medicalHistory.patientId, patientId),
   });
 
   return c.json(result);
@@ -25,27 +25,27 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const patientId = parseInt(c.req.param('patientId'));
   const data = await c.req.json();
-  const [medicalHistory] = await db
-    .insert(medicalHistories)
+  const [history] = await db
+    .insert(medicalHistory)
     .values({ ...data, patientId })
     .returning();
-  console.log('MEDICAL HISTORY CREATED', medicalHistory);
+  console.log('MEDICAL HISTORY CREATED', history);
 
-  return c.json(medicalHistory, HttpStatusCodes.CREATED);
+  return c.json(history, HttpStatusCodes.CREATED);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const patientId = parseInt(c.req.param('patientId'));
   const medicalHistoryId = parseInt(c.req.param('id'));
 
-  const medicalHistory = await db.query.medicalHistories.findFirst({
+  const history = await db.query.medicalHistory.findFirst({
     where: and(
-      eq(medicalHistories.id, medicalHistoryId),
-      eq(medicalHistories.patientId, patientId)
+      eq(medicalHistory.id, medicalHistoryId),
+      eq(medicalHistory.patientId, patientId)
     ),
   });
 
-  if (!medicalHistory) {
+  if (!history) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -54,7 +54,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     );
   }
 
-  return c.json(medicalHistory, HttpStatusCodes.OK);
+  return c.json(history, HttpStatusCodes.OK);
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
@@ -62,18 +62,18 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const medicalHistoryId = parseInt(c.req.param('id'));
   const data = await c.req.json();
 
-  const [medicalHistory] = await db
-    .update(medicalHistories)
+  const [history] = await db
+    .update(medicalHistory)
     .set(data)
     .where(
       and(
-        eq(medicalHistories.id, medicalHistoryId),
-        eq(medicalHistories.patientId, patientId)
+        eq(medicalHistory.id, medicalHistoryId),
+        eq(medicalHistory.patientId, patientId)
       )
     )
     .returning();
 
-  if (!medicalHistory) {
+  if (!history) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -82,18 +82,18 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  return c.json(medicalHistory, HttpStatusCodes.OK);
+  return c.json(history, HttpStatusCodes.OK);
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const patientId = parseInt(c.req.param('patientId'));
   const medicalHistoryId = parseInt(c.req.param('id'));
   const result = await db
-    .delete(medicalHistories)
+    .delete(medicalHistory)
     .where(
       and(
-        eq(medicalHistories.id, medicalHistoryId),
-        eq(medicalHistories.patientId, patientId)
+        eq(medicalHistory.id, medicalHistoryId),
+        eq(medicalHistory.patientId, patientId)
       )
     );
 

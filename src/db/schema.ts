@@ -16,7 +16,7 @@ export const patients = sqliteTable('patients', {
 export const patientsRelations = relations(patients, ({ many }) => ({
   diagnosticTestResults: many(diagnosticTestResults),
   medications: many(medications),
-  medicalHistories: many(medicalHistories),
+  medicalHistory: many(medicalHistory),
 }));
 
 export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
@@ -58,7 +58,7 @@ export const medicationsRelations = relations(medications, ({ one }) => ({
   }),
 }));
 
-export const medicalHistories = sqliteTable('medical_history', {
+export const medicalHistory = sqliteTable('medical_history', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   medicalConditions: text('medical_conditions'),
   allergies: text('allergies'),
@@ -70,15 +70,12 @@ export const medicalHistories = sqliteTable('medical_history', {
   ...timestamps,
 });
 
-export const medicalHistoriesRelations = relations(
-  medicalHistories,
-  ({ one }) => ({
-    patient: one(patients, {
-      fields: [medicalHistories.patientId],
-      references: [patients.id],
-    }),
-  })
-);
+export const medicalHistoryRelations = relations(medicalHistory, ({ one }) => ({
+  patient: one(patients, {
+    fields: [medicalHistory.patientId],
+    references: [patients.id],
+  }),
+}));
 
 /** PATIENT */
 export const selectPatientsSchema = createSelectSchema(patients);
@@ -136,23 +133,18 @@ export const insertMedicationsSchema = createInsertSchema(medications, {
 export const patchMedicationsSchema = insertMedicationsSchema.partial();
 
 /** MEDICAL HISTORY */
-export const selectMedicalHistoriesSchema =
-  createSelectSchema(medicalHistories);
+export const selectMedicalHistorySchema = createSelectSchema(medicalHistory);
 
-export const insertMedicalHistoriesSchema = createInsertSchema(
-  medicalHistories,
-  {
-    medicalConditions: (schema) => schema.min(1).max(50),
-    allergies: (schema) => schema.min(1).max(50),
-    surgeries: (schema) => schema.min(1).max(50),
-    treatments: (schema) => schema.min(1).max(50),
-  }
-).omit({
+export const insertMedicalHistorySchema = createInsertSchema(medicalHistory, {
+  medicalConditions: (schema) => schema.min(1).max(50),
+  allergies: (schema) => schema.min(1).max(50),
+  surgeries: (schema) => schema.min(1).max(50),
+  treatments: (schema) => schema.min(1).max(50),
+}).omit({
   id: true,
   patientId: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const patchMedicalHistoriesSchema =
-  insertMedicalHistoriesSchema.partial();
+export const patchMedicalHistorySchema = insertMedicalHistorySchema.partial();

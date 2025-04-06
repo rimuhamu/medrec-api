@@ -1,7 +1,7 @@
 import {
-  insertMedicalHistoriesSchema,
-  patchMedicalHistoriesSchema,
-  selectMedicalHistoriesSchema,
+  insertMedicalHistorySchema,
+  patchMedicalHistorySchema,
+  selectMedicalHistorySchema,
 } from '@/db/schema';
 import { notFoundSchema } from '@/lib/constants';
 import { createRoute, z } from '@hono/zod-openapi';
@@ -13,10 +13,10 @@ import {
 } from 'stoker/openapi/helpers';
 import { createErrorSchema, IdParamsSchema } from 'stoker/openapi/schemas';
 
-const tags = ['Medical Histories'];
+const tags = ['Medical History'];
 
 export const list = createRoute({
-  path: '/patients/{patientId}/medical-histories',
+  path: '/patients/{patientId}/medical-history',
   method: 'get',
   tags,
   request: {
@@ -29,14 +29,14 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectMedicalHistoriesSchema),
-      'The list of medical histories'
+      z.array(selectMedicalHistorySchema),
+      'The list of medical history'
     ),
   },
 });
 
 export const create = createRoute({
-  path: '/patients/{patientId}/medical-histories',
+  path: '/patients/{patientId}/medical-history',
   method: 'post',
   request: {
     params: z.object({
@@ -46,25 +46,25 @@ export const create = createRoute({
       }),
     }),
     body: jsonContentRequired(
-      insertMedicalHistoriesSchema,
-      'The medical histories to create'
+      insertMedicalHistorySchema,
+      'The medical history to create'
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(
-      selectMedicalHistoriesSchema,
+      selectMedicalHistorySchema,
       'The created medical history'
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertMedicalHistoriesSchema),
+      createErrorSchema(insertMedicalHistorySchema),
       'The validation error'
     ),
   },
 });
 
 export const getOne = createRoute({
-  path: '/patients/{patientId}/medical-histories/{id}',
+  path: '/patients/{patientId}/medical-history/{id}',
   method: 'get',
   request: {
     params: z.object({
@@ -81,7 +81,7 @@ export const getOne = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectMedicalHistoriesSchema,
+      selectMedicalHistorySchema,
       'The requested medical history'
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -96,7 +96,7 @@ export const getOne = createRoute({
 });
 
 export const patch = createRoute({
-  path: '/patients/{patientId}/medical-histories/{id}',
+  path: '/patients/{patientId}/medical-history/{id}',
   method: 'patch',
   request: {
     params: z.object({
@@ -110,14 +110,14 @@ export const patch = createRoute({
       }),
     }),
     body: jsonContentRequired(
-      patchMedicalHistoriesSchema,
+      patchMedicalHistorySchema,
       'The medical history updates'
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectMedicalHistoriesSchema,
+      selectMedicalHistorySchema,
       'The requested medical history'
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -126,7 +126,7 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
       [
-        createErrorSchema(patchMedicalHistoriesSchema),
+        createErrorSchema(patchMedicalHistorySchema),
         createErrorSchema(IdParamsSchema),
       ],
       'Invalid id error'
@@ -135,7 +135,7 @@ export const patch = createRoute({
 });
 
 export const remove = createRoute({
-  path: '/patients/{patientId}/medical-histories/{id}',
+  path: '/patients/{patientId}/medical-history/{id}',
   method: 'delete',
   request: {
     params: z.object({

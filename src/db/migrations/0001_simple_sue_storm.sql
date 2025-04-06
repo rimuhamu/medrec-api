@@ -1,0 +1,1 @@
+ALTER TABLE `diagnostic_test_result` ADD `title` text;
