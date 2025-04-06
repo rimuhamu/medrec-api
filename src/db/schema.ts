@@ -61,7 +61,7 @@ export const medicationsRelations = relations(medications, ({ one }) => ({
 export const medicalHistory = sqliteTable('medical_history', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   medicalConditions: text('medical_conditions'),
-  allergies: text('allergies'),
+  allergies: text('allergies', { mode: 'json' }).$type<string[]>(), // Store as JSON,
   surgeries: text('surgeries'),
   treatments: text('treatments'),
   patientId: integer('patient_id')
@@ -137,7 +137,7 @@ export const selectMedicalHistorySchema = createSelectSchema(medicalHistory);
 
 export const insertMedicalHistorySchema = createInsertSchema(medicalHistory, {
   medicalConditions: (schema) => schema.min(1).max(50),
-  allergies: (schema) => schema.min(1).max(50),
+  allergies: (schema) => schema.array().nonempty(),
   surgeries: (schema) => schema.min(1).max(50),
   treatments: (schema) => schema.min(1).max(50),
 }).omit({
