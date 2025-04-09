@@ -15,6 +15,13 @@
       "when": 1743965676117,
       "tag": "0001_simple_sue_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1744231921994,
+      "tag": "0002_burly_masque",
+      "breakpoints": true
     }
   ]
 }
