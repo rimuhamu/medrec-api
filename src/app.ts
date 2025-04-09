@@ -23,7 +23,7 @@ app.route('/', authRouter);
 // Protected routes
 app.use('/patients$', authenticate, adminOnly);
 
-app.use('/patients/:patientId([0-9]+)', authenticate, userResourceAccess);
+app.use('/patients/:patientId', authenticate, userResourceAccess);
 
 app.route('/', patientsRouter);
 

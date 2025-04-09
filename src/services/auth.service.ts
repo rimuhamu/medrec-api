@@ -127,14 +127,14 @@ export class AuthService {
   }
 
   async getUserById(userId: number): Promise<any | null> {
-    console.log('getting user id...');
+    console.log(`Looking up user with ID: ${userId}`);
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
       with: {
         patient: true,
       },
     });
-    console.log(user);
+    console.log('Query result:', user);
     if (!user) return null;
 
     const { password, ...userWithoutPassword } = user;

@@ -28,6 +28,8 @@ export const authenticate = async (c: Context, next: Next) => {
 
   c.set('user', payload);
 
+  console.log('User set in context:', c.get('user'));
+
   return next();
 };
 
@@ -46,14 +48,17 @@ export const adminOnly = async (c: Context, next: Next) => {
 
 export const userResourceAccess = async (c: Context, next: Next) => {
   const user = c.get('user');
-  const requestedPatientId = parseInt(c.req.param('id'));
+  console.log('User from context in userResourceAccess:', user);
+  console.log('All parameters:', c.req.param());
 
-  console.log('user resource access check...');
+  const requestedPatientId = parseInt(c.req.param('patientId'));
+  console.log('Requested patient ID:', requestedPatientId);
+
   if (user.role === 'admin') {
     return next();
   }
-  console.log(requestedPatientId);
-  const userData = await authService.getUserById(user.userId);
+
+  const userData = await authService.getUserById(user.id);
   console.log(userData);
 
   if (!userData || userData.patientId !== requestedPatientId) {
