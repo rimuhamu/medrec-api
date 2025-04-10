@@ -126,18 +126,27 @@ export class AuthService {
     return { user: userWithoutPassword, token };
   }
 
-  async getUserById(userId: number): Promise<any | null> {
+  async getUserById(
+    user: UserPayload | { userId: number }
+  ): Promise<any | null> {
+    const userId = 'id' in user ? user.id : user.userId;
+
+    if (!userId) {
+      console.error('No user ID provided to getUserById');
+      return null;
+    }
     console.log(`Looking up user with ID: ${userId}`);
-    const user = await db.query.users.findFirst({
+
+    const foundUser = await db.query.users.findFirst({
       where: eq(users.id, userId),
       with: {
         patient: true,
       },
     });
-    console.log('Query result:', user);
-    if (!user) return null;
 
-    const { password, ...userWithoutPassword } = user;
+    if (!foundUser) return null;
+
+    const { password, ...userWithoutPassword } = foundUser;
     return userWithoutPassword;
   }
 }

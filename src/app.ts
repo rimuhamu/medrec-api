@@ -11,10 +11,22 @@ import {
   authenticate,
   userResourceAccess,
 } from '@/middlewares/auth.middleware.ts';
+import { cors } from 'hono/cors';
 
 const app = createApp();
 
 configureOpenAPI(app);
+
+app.use(
+  cors({
+    origin: ['http://localhost:3000'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
 // Public routes
 app.route('/', index);

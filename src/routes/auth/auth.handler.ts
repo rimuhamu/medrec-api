@@ -104,15 +104,16 @@ export const profile: AppRouteHandler<ProfileRoute> = async (c) => {
   try {
     const user = c.get('user');
 
+    //console.log('User from profile: ', user);
+
     if (!user) {
       return c.json(
         { message: 'Not authenticated' },
         HttpStatusCodes.UNAUTHORIZED
       );
     }
-
-    const userData = await authService.getUserById(user.userId);
-
+    const userData = await authService.getUserById(user);
+    console.log('User Data from profile: ', userData);
     if (!userData) {
       return c.json({ message: 'User not found' }, HttpStatusCodes.NOT_FOUND);
     }
