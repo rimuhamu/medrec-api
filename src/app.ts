@@ -12,6 +12,7 @@ import {
   userResourceAccess,
 } from '@/middlewares/auth.middleware.ts';
 import { cors } from 'hono/cors';
+import env from './env.ts';
 
 const app = createApp();
 
@@ -19,7 +20,7 @@ configureOpenAPI(app);
 
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: [env.CORS_ORIGIN],
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowHeaders: ['Content-Type', 'Authorization'],
     exposeHeaders: ['Content-Length'],
