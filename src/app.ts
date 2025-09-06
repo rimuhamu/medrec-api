@@ -34,28 +34,16 @@ app.route('/', index);
 app.route('/', authRouter);
 
 // Protected routes
-app.use('/patients$', authenticate, adminOnly);
+const patientSubRoutes = createApp()
+  .use(authenticate, userResourceAccess)
+  .route('/', medicationsRouter)
+  .route('/', medicalHistoryRouter)
+  .route('/', diagnosticTestResultsRouter);
 
-app.use('/patients/:patientId', authenticate, userResourceAccess);
-
-app.route('/', patientsRouter);
-
-app.use('/patients/:patientId/medications*', authenticate, userResourceAccess);
-
-app.route('/', medicationsRouter);
-
-app.use(
-  '/patients/:patientId/medical-history*',
-  authenticate,
-  userResourceAccess
-);
-app.route('/', medicalHistoryRouter);
-
-app.use(
-  '/patients/:patientId/diagnostic-test-results*',
-  authenticate,
-  userResourceAccess
-);
-app.route('/', diagnosticTestResultsRouter);
+app
+  .use('/patients$', authenticate, adminOnly)
+  .use('/patients/:patientId', authenticate, userResourceAccess)
+  .route('/', patientsRouter)
+  .route('/patients/:patientId', patientSubRoutes);
 
 export default app;
