@@ -6,7 +6,13 @@
     "dev": "tsx watch src/index.ts",
     "lint": "eslint .",
     "lint:fix": "npm run lint --fix",
-    "seed:admin": "tsx src/scripts/seed-admin.ts"
+    
+    "db:seed": "npx dotenv-cli npx tsx src/scripts/run-seed.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.0",
