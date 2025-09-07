@@ -8,13 +8,11 @@
     "dev": "tsx watch src/index.ts",
     "lint": "eslint .",
     "lint:fix": "npm run lint --fix",
-    
     "db:seed": "npx dotenv-cli npx tsx src/scripts/run-seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
-
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.0",
@@ -41,6 +39,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^4.2.1",
     "@types/node": "^20.11.17",
+    "@vercel/node": "^5.3.21",
     "drizzle-kit": "^0.30.4",
     "eslint": "^9.20.1",
     "eslint-plugin-format": "^1.0.1",
