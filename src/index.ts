@@ -13,6 +13,3 @@ if (process.env.NODE_ENV !== 'production') {
     port,
   });
 }
-
-// Vercel serverless deployment
-export default app;
