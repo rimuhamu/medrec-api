@@ -6,7 +6,13 @@ import env from './env.ts';
 const port = Number(env.PORT || 3000);
 console.log(`Server is running on http://localhost:${port}`);
 
-serve({
-  fetch: app.fetch,
-  port,
-});
+if (process.env.NODE_ENV !== 'production') {
+  console.log(`Server is running on http://localhost:${port}`);
+  serve({
+    fetch: app.fetch,
+    port,
+  });
+}
+
+// Vercel serverless deployment
+export default app;

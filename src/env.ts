@@ -4,7 +4,9 @@ import { expand } from 'dotenv-expand';
 
 import { z, ZodError } from 'zod';
 
-expand(config());
+if (process.env.NODE_ENV !== 'production') {
+  expand(config());
+}
 
 const EnvSchema = z
   .object({
