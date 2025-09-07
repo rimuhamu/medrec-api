@@ -13,3 +13,5 @@ if (process.env.NODE_ENV !== 'production') {
     port,
   });
 }
+
+export default app;
