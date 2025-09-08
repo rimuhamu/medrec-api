@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node server.ts",
+    "start": "node src/server.ts",
     "dev": "tsx watch src/index.ts",
     "lint": "eslint .",
     "lint:fix": "npm run lint --fix",
