@@ -4,14 +4,18 @@ import app from './app.ts';
 import env from './env.ts';
 
 const port = Number(env.PORT || 3000);
-console.log(`Server is running on http://localhost:${port}`);
 
-if (process.env.NODE_ENV !== 'production') {
-  console.log(`Server is running on http://localhost:${port}`);
-  serve({
+serve(
+  {
     fetch: app.fetch,
     port,
-  });
-}
+  },
+  (info) => {
+    console.log(`✅ Medrec API is running on http://localhost:${info.port}`);
+    console.log(
+      `📖 API Documentation: http://localhost:${info.port}/reference`
+    );
+  }
+);
 
 export default app;
