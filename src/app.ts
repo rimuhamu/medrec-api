@@ -34,16 +34,22 @@ app.route('/', index);
 app.route('/', authRouter);
 
 // Protected routes
-const patientSubRoutes = createApp()
-  .use(authenticate, userResourceAccess)
-  .route('/', medicationsRouter)
-  .route('/', medicalHistoryRouter)
-  .route('/', diagnosticTestResultsRouter);
+const protectedApp = createApp();
 
-app
-  .use('/patients$', authenticate, adminOnly)
-  .use('/patients/:patientId', authenticate, userResourceAccess)
-  .route('/', patientsRouter)
-  .route('/patients/:patientId', patientSubRoutes);
+// Apply authentication middleware to all protected routes
+protectedApp.use('*', authenticate);
+
+// Register patient management routes (admin only)
+protectedApp.use('/patients', adminOnly);
+protectedApp.route('/', patientsRouter);
+
+// Register patient sub-resource routes with resource access control
+protectedApp.use('/patients/:patientId/*', userResourceAccess);
+protectedApp.route('/', medicationsRouter);
+protectedApp.route('/', medicalHistoryRouter);
+protectedApp.route('/', diagnosticTestResultsRouter);
+
+// Mount the protected routes
+app.route('/', protectedApp);
 
 export default app;

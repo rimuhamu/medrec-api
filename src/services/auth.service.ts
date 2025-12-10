@@ -127,14 +127,32 @@ export class AuthService {
   }
 
   async getUserById(
-    user: UserPayload | { userId: number }
+    userInput: UserPayload | { userId: number } | number
   ): Promise<any | null> {
-    const userId = 'id' in user ? user.id : user.userId;
+    let userId: number;
+
+    // Fix the type checking logic
+    if (typeof userInput === 'number') {
+      userId = userInput;
+    } else if (typeof userInput === 'object' && userInput !== null) {
+      if ('id' in userInput) {
+        userId = userInput.id;
+      } else if ('userId' in userInput) {
+        userId = userInput.userId;
+      } else {
+        console.error('Invalid user input format:', userInput);
+        return null;
+      }
+    } else {
+      console.error('Invalid user input type:', typeof userInput);
+      return null;
+    }
 
     if (!userId) {
       console.error('No user ID provided to getUserById');
       return null;
     }
+
     console.log(`Looking up user with ID: ${userId}`);
 
     const foundUser = await db.query.users.findFirst({
