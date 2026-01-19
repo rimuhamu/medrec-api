@@ -19,8 +19,19 @@ const app = createApp();
 configureOpenAPI(app);
 
 app.use(
+  "*",
   cors({
-    origin: [env.CORS_ORIGIN],
+    origin: (origin) => {
+      if (!origin) return "*";
+
+      if (origin === env.CORS_ORIGIN) return origin;
+
+      if (/^http:\/\/localhost:\d+$/.test(origin)) {
+        return origin;
+      }
+
+      return null;
+    },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowHeaders: ["Content-Type", "Authorization"],
     exposeHeaders: ["Content-Length"],
