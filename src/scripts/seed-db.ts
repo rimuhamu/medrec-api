@@ -15,28 +15,28 @@ const patientsData = [
     age: 35,
     address: "123 Oak Street, Springfield, IL 62701",
     phoneNumber: "08123456789",
-    nextAppointment: "2026-01-22",
+    nextAppointment: "2026-02-15",
   },
   {
     name: "Sarah Johnson",
     age: 42,
     address: "456 Maple Avenue, Chicago, IL 60601",
     phoneNumber: "08234567890",
-    nextAppointment: "2025-09-20",
+    nextAppointment: "2026-02-20",
   },
   {
     name: "Michael Davis",
     age: 28,
     address: "789 Pine Road, Peoria, IL 61602",
     phoneNumber: "08345678901",
-    nextAppointment: "2025-09-18",
+    nextAppointment: "2026-03-05",
   },
   {
     name: "Emily Wilson",
     age: 67,
     address: "321 Elm Circle, Rockford, IL 61101",
     phoneNumber: "08456789012",
-    nextAppointment: "2025-09-22",
+    nextAppointment: "2026-03-12",
   },
 ];
 
