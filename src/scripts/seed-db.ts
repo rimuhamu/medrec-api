@@ -15,7 +15,7 @@ const patientsData = [
     age: 35,
     address: "123 Oak Street, Springfield, IL 62701",
     phoneNumber: "08123456789",
-    nextAppointment: "2025-09-15",
+    nextAppointment: "2026-01-22",
   },
   {
     name: "Sarah Johnson",
@@ -45,13 +45,13 @@ const medicationsData = [
     {
       name: "Lisinopril",
       dosage: "10mg",
-      frequency: "Once daily",
+      frequency: "Once daily in the morning",
       duration: "6 months",
     },
     {
       name: "Metformin",
       dosage: "500mg",
-      frequency: "Twice daily",
+      frequency: "Twice daily with breakfast and dinner",
       duration: "1 month",
     },
   ],
@@ -65,7 +65,7 @@ const medicationsData = [
     {
       name: "Levothyroxine",
       dosage: "75mcg",
-      frequency: "Once daily morning",
+      frequency: "Once daily before breakfast on empty stomach",
       duration: "1 month",
     },
   ],
@@ -73,7 +73,7 @@ const medicationsData = [
     {
       name: "Albuterol",
       dosage: "90mcg",
-      frequency: "As needed",
+      frequency: "As needed for breathing difficulty",
       duration: "12 months",
     },
   ],
@@ -81,19 +81,19 @@ const medicationsData = [
     {
       name: "Amlodipine",
       dosage: "5mg",
-      frequency: "Once daily",
+      frequency: "Once daily in the morning",
       duration: "Ongoing",
     },
     {
       name: "Warfarin",
       dosage: "5mg",
-      frequency: "Once daily",
+      frequency: "Once daily in the evening",
       duration: "6 months",
     },
     {
       name: "Furosemide",
       dosage: "40mg",
-      frequency: "Twice daily",
+      frequency: "Twice daily in the morning and afternoon",
       duration: "3 months",
     },
   ],
