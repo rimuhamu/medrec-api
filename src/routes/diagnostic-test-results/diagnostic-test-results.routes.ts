@@ -1,7 +1,7 @@
 import {
-  insertDiagnosticTestResultsSchema,
-  patchDiagnosticTestResultsSchema,
-  selectDiagnosticTestResultsSchema,
+  insertDiagnosticTestResultSchema,
+  patchDiagnosticTestResultSchema,
+  selectDiagnosticTestResultSchema,
 } from '@/db/schema';
 import { notFoundSchema } from '@/lib/constants';
 import { createRoute, z } from '@hono/zod-openapi';
@@ -29,7 +29,7 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectDiagnosticTestResultsSchema),
+      z.array(selectDiagnosticTestResultSchema),
       'The list of diagnostic test results'
     ),
   },
@@ -46,18 +46,18 @@ export const create = createRoute({
       }),
     }),
     body: jsonContentRequired(
-      insertDiagnosticTestResultsSchema,
+      insertDiagnosticTestResultSchema,
       'The diagnostic test results to create'
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(
-      selectDiagnosticTestResultsSchema,
+      selectDiagnosticTestResultSchema,
       'The created diagnostic test result'
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertDiagnosticTestResultsSchema),
+      createErrorSchema(insertDiagnosticTestResultSchema),
       'The validation error'
     ),
   },
@@ -81,7 +81,7 @@ export const getOne = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectDiagnosticTestResultsSchema,
+      selectDiagnosticTestResultSchema,
       'The requested diagnostic test result'
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -110,14 +110,14 @@ export const patch = createRoute({
       }),
     }),
     body: jsonContentRequired(
-      patchDiagnosticTestResultsSchema,
+      patchDiagnosticTestResultSchema,
       'The diagnostic test result updates'
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectDiagnosticTestResultsSchema,
+      selectDiagnosticTestResultSchema,
       'The requested diagnostic test result'
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -126,7 +126,7 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
       [
-        createErrorSchema(patchDiagnosticTestResultsSchema),
+        createErrorSchema(patchDiagnosticTestResultSchema),
         createErrorSchema(IdParamsSchema),
       ],
       'Invalid id error'
@@ -170,3 +170,39 @@ export type CreateRoute = typeof create;
 export type GetOneRoute = typeof getOne;
 export type PatchRoute = typeof patch;
 export type RemoveRoute = typeof remove;
+
+// ELI5 explanation response schema
+const explainResponseSchema = z.object({
+  original_result: z.string(),
+  explanation: z.string(),
+});
+
+export const explain = createRoute({
+  path: '/patients/{patientId}/diagnostic-test-results/{id}/explain',
+  method: 'get',
+  tags,
+  request: {
+    params: z.object({
+      patientId: z.string().openapi({
+        description: 'Patient ID',
+        example: '1',
+      }),
+      id: z.string().openapi({
+        description: 'Diagnostic Test Result ID',
+        example: '1',
+      }),
+    }),
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      explainResponseSchema,
+      'AI-generated explanation of the test result in simple terms'
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema,
+      'Diagnostic Test Result not found'
+    ),
+  },
+});
+
+export type ExplainRoute = typeof explain;
