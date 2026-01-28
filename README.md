@@ -1,6 +1,6 @@
 # MedRec API
 
-A medical records management API built with Hono, TypeScript, and SQLite. Features JWT authentication, role-based access control, and comprehensive patient data management.
+A medical records management API built with Hono, TypeScript, and SQLite. Features JWT authentication, role-based access control, comprehensive patient data management, and AI-powered medical insights.
 
 ## Features
 
@@ -9,6 +9,7 @@ A medical records management API built with Hono, TypeScript, and SQLite. Featur
 - **Authentication** - JWT-based auth with admin/user roles
 - **OpenAPI Docs** - Auto-generated interactive API documentation
 - **Type-Safe** - Built with TypeScript, Zod validation, and Drizzle ORM
+- **AI-Powered Insights** - Google Gemini integration for medication scheduling and test result explanations
 
 ## Tech Stack
 
@@ -17,6 +18,7 @@ A medical records management API built with Hono, TypeScript, and SQLite. Featur
 **Database:** SQLite (Turso/LibSQL)  
 **ORM:** Drizzle ORM  
 **Auth:** JWT + bcrypt  
+**AI:** Google Gemini API  
 
 ## Quick Start
 
@@ -38,7 +40,10 @@ DATABASE_URL=file:./dev.db
 DATABASE_AUTH_TOKEN=
 JWT_SECRET=your-secret-key-change-in-production
 CORS_ORIGIN=http://localhost:3000
+LLM_API_KEY=your-google-gemini-api-key
 ```
+
+> **Note:** `LLM_API_KEY` is optional but required for AI-powered features (medication scheduling, test result explanations).
 
 ### Database Setup
 
@@ -106,22 +111,56 @@ Authorization: Bearer <token>
 - `PATCH /patients/:id` - Update
 - `DELETE /patients/:id` - Delete
 
-**Medications/Medical History/Test Results:**
-- `GET /patients/:patientId/{resource}` - List
-- `POST /patients/:patientId/{resource}` - Create
-- `GET /patients/:patientId/{resource}/:id` - Get one
-- `PATCH /patients/:patientId/{resource}/:id` - Update
-- `DELETE /patients/:patientId/{resource}/:id` - Delete
+**Medications:**
+- `GET /patients/:patientId/medications` - List
+- `POST /patients/:patientId/medications` - Create
+- `GET /patients/:patientId/medications/:id` - Get one
+- `PATCH /patients/:patientId/medications/:id` - Update
+- `DELETE /patients/:patientId/medications/:id` - Delete
+- `GET /patients/:patientId/medications/schedule` - **AI-generated daily schedule**
+
+**Diagnostic Test Results:**
+- `GET /patients/:patientId/diagnostic-test-results` - List
+- `POST /patients/:patientId/diagnostic-test-results` - Create
+- `GET /patients/:patientId/diagnostic-test-results/:id` - Get one
+- `PATCH /patients/:patientId/diagnostic-test-results/:id` - Update
+- `DELETE /patients/:patientId/diagnostic-test-results/:id` - Delete
+- `GET /patients/:patientId/diagnostic-test-results/:id/explain` - **AI-generated ELI5 explanation**
+
+**Medical History:**
+- `GET /patients/:patientId/medical-history` - List
+- `POST /patients/:patientId/medical-history` - Create
+- `GET /patients/:patientId/medical-history/:id` - Get one
+- `PATCH /patients/:patientId/medical-history/:id` - Update
+- `DELETE /patients/:patientId/medical-history/:id` - Delete
 
 *Users can only access their own patient records. Admins can access all.*
 
+## AI-Powered Features
+
+### Medication Schedule Generation
+Generate an AI-powered daily medication schedule based on a patient's medications:
+```bash
+GET /patients/:patientId/medications/schedule
+```
+
+Returns a structured schedule organizing medications by time of day (Morning, Afternoon, Evening, etc.).
+
+### Diagnostic Test Result Explanation
+Get an ELI5 (Explain Like I'm 5) explanation of medical test results in plain, patient-friendly language:
+```bash
+GET /patients/:patientId/diagnostic-test-results/:id/explain
+```
+
+Returns the original result alongside a simplified explanation that avoids medical jargon.
+
 ## Database Schema
 
-**users** - id, username, password (hashed), role, patientId  
-**patients** - id, name, age, address, phoneNumber, nextAppointment  
-**medications** - id, name, dosage, frequency, duration, patientId  
-**medical_history** - id, medicalConditions, allergies, surgeries, treatments, patientId  
-**diagnostic_test_result** - id, title, result, patientId  
+**users** - id, username, password (hashed), role, patientId, createdAt, updatedAt  
+**patients** - id, name, age, address, phoneNumber, nextAppointment, createdAt, updatedAt  
+**medications** - id, name, dosage, frequency, duration, patientId, createdAt, updatedAt  
+**medical_histories** - id, medicalConditions, allergies (JSON array), surgeries, treatments, patientId, createdAt, updatedAt  
+**diagnostic_test_results** - id, title, result, patientId, createdAt, updatedAt  
 
 ## Scripts
 
@@ -130,6 +169,7 @@ npm run dev          # Development server
 npm run build        # Build TypeScript
 npm start            # Production server
 npm run lint         # Lint code
+npm run lint:fix     # Lint and fix code
 npm run db:generate  # Generate migrations
 npm run db:migrate   # Run migrations
 npm run db:push      # Push schema changes
@@ -145,8 +185,22 @@ src/
 ├── lib/             # App config, types, utilities
 ├── middlewares/     # Auth middleware
 ├── routes/          # API routes (auth, patients, medications, etc.)
+│   ├── auth/
+│   ├── diagnostic-test-results/
+│   ├── medical-history/
+│   ├── medications/
+│   └── patients/
 ├── scripts/         # Database seeding
-├── services/        # Auth service
+├── services/        # Auth service, LLM service
 ├── app.ts           # App configuration
+├── env.ts           # Environment configuration
 └── server.ts        # Entry point
 ```
+
+## Deployment
+
+This API is configured for deployment on Vercel. See `vercel.json` for configuration.
+
+## License
+
+MIT
