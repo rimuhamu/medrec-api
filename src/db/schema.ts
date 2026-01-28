@@ -8,23 +8,23 @@ export enum UserRole {
   USER = 'user',
 }
 
-export const users = sqliteTable('users', {
+export const user = sqliteTable('users', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   username: text('username').notNull().unique(),
   password: text('password').notNull(), // This will store hashed passwords
   role: text('role').$type<UserRole>().notNull().default(UserRole.USER),
-  patientId: integer('patient_id').references(() => patients.id),
+  patientId: integer('patient_id').references(() => patient.id),
   ...timestamps,
 });
 
-export const usersRelations = relations(users, ({ one }) => ({
-  patient: one(patients, {
-    fields: [users.patientId],
-    references: [patients.id],
+export const userRelations = relations(user, ({ one }) => ({
+  patient: one(patient, {
+    fields: [user.patientId],
+    references: [patient.id],
   }),
 }));
 
-export const patients = sqliteTable('patients', {
+export const patient = sqliteTable('patients', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
   age: integer('age').notNull(),
@@ -34,37 +34,37 @@ export const patients = sqliteTable('patients', {
   ...timestamps,
 });
 
-export const patientsRelations = relations(patients, ({ many, one }) => ({
-  diagnosticTestResults: many(diagnosticTestResults),
-  medications: many(medications),
+export const patientRelations = relations(patient, ({ many, one }) => ({
+  diagnosticTestResults: many(diagnosticTestResult),
+  medications: many(medication),
   medicalHistory: many(medicalHistory),
-  user: one(users, {
-    fields: [patients.id],
-    references: [users.patientId],
+  user: one(user, {
+    fields: [patient.id],
+    references: [user.patientId],
   }),
 }));
 
-export const diagnosticTestResults = sqliteTable('diagnostic_test_result', {
+export const diagnosticTestResult = sqliteTable('diagnostic_test_results', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   title: text('title'),
   result: text('result'),
   patientId: integer('patient_id')
     .notNull()
-    .references(() => patients.id, { onDelete: 'cascade' }),
+    .references(() => patient.id, { onDelete: 'cascade' }),
   ...timestamps,
 });
 
-export const diagnosticTestResultsRelations = relations(
-  diagnosticTestResults,
+export const diagnosticTestResultRelations = relations(
+  diagnosticTestResult,
   ({ one }) => ({
-    patient: one(patients, {
-      fields: [diagnosticTestResults.patientId],
-      references: [patients.id],
+    patient: one(patient, {
+      fields: [diagnosticTestResult.patientId],
+      references: [patient.id],
     }),
   })
 );
 
-export const medications = sqliteTable('medication', {
+export const medication = sqliteTable('medications', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name'),
   dosage: text('dosage'),
@@ -72,18 +72,18 @@ export const medications = sqliteTable('medication', {
   duration: text('duration'),
   patientId: integer('patient_id')
     .notNull()
-    .references(() => patients.id, { onDelete: 'cascade' }),
+    .references(() => patient.id, { onDelete: 'cascade' }),
   ...timestamps,
 });
 
-export const medicationsRelations = relations(medications, ({ one }) => ({
-  patient: one(patients, {
-    fields: [medications.patientId],
-    references: [patients.id],
+export const medicationRelations = relations(medication, ({ one }) => ({
+  patient: one(patient, {
+    fields: [medication.patientId],
+    references: [patient.id],
   }),
 }));
 
-export const medicalHistory = sqliteTable('medical_history', {
+export const medicalHistory = sqliteTable('medical_histories', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   medicalConditions: text('medical_conditions'),
   allergies: text('allergies', { mode: 'json' }).$type<string[]>(), // Store as JSON,
@@ -91,41 +91,41 @@ export const medicalHistory = sqliteTable('medical_history', {
   treatments: text('treatments'),
   patientId: integer('patient_id')
     .notNull()
-    .references(() => patients.id, { onDelete: 'cascade' }),
+    .references(() => patient.id, { onDelete: 'cascade' }),
   ...timestamps,
 });
 
 export const medicalHistoryRelations = relations(medicalHistory, ({ one }) => ({
-  patient: one(patients, {
+  patient: one(patient, {
     fields: [medicalHistory.patientId],
-    references: [patients.id],
+    references: [patient.id],
   }),
 }));
 
 /** USER */
 
-export const selectUsersSchema = createSelectSchema(users).omit({
+export const selectUserSchema = createSelectSchema(user).omit({
   password: true,
 });
 
-export const insertUsersSchema = createInsertSchema(users, {
+export const insertUserSchema = createInsertSchema(user, {
   username: (schema) => schema.min(3).max(50),
   password: (schema) => schema.min(8).max(100),
   role: (schema) => schema.optional(),
   patientId: (schema) => schema.optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
-export const patchUsersSchema = insertUsersSchema.partial();
+export const patchUserSchema = insertUserSchema.partial();
 
-export const loginSchema = insertUsersSchema.pick({
+export const loginSchema = insertUserSchema.pick({
   username: true,
   password: true,
 });
 
 /** PATIENT */
-export const selectPatientsSchema = createSelectSchema(patients);
+export const selectPatientSchema = createSelectSchema(patient);
 
-export const insertPatientsSchema = createInsertSchema(patients, {
+export const insertPatientSchema = createInsertSchema(patient, {
   name: (schema) => schema.min(1),
   age: (schema) => schema.gte(0).lte(100),
   address: (schema) => schema.min(10),
@@ -137,15 +137,15 @@ export const insertPatientsSchema = createInsertSchema(patients, {
   updatedAt: true,
 });
 
-export const patchPatientsSchema = insertPatientsSchema.partial();
+export const patchPatientSchema = insertPatientSchema.partial();
 
 /** DIAGNOSTIC TEST RESULT */
-export const selectDiagnosticTestResultsSchema = createSelectSchema(
-  diagnosticTestResults
+export const selectDiagnosticTestResultSchema = createSelectSchema(
+  diagnosticTestResult
 );
 
-export const insertDiagnosticTestResultsSchema = createInsertSchema(
-  diagnosticTestResults,
+export const insertDiagnosticTestResultSchema = createInsertSchema(
+  diagnosticTestResult,
   {
     title: (schema) => schema.min(1).max(30),
     result: (schema) => schema.min(1).max(300),
@@ -157,13 +157,13 @@ export const insertDiagnosticTestResultsSchema = createInsertSchema(
   updatedAt: true,
 });
 
-export const patchDiagnosticTestResultsSchema =
-  insertDiagnosticTestResultsSchema.partial();
+export const patchDiagnosticTestResultSchema =
+  insertDiagnosticTestResultSchema.partial();
 
 /** MEDICATION */
-export const selectMedicationsSchema = createSelectSchema(medications);
+export const selectMedicationSchema = createSelectSchema(medication);
 
-export const insertMedicationsSchema = createInsertSchema(medications, {
+export const insertMedicationSchema = createInsertSchema(medication, {
   name: (schema) => schema.min(1),
   dosage: (schema) => schema.min(1),
   frequency: (schema) => schema.min(1),
@@ -175,7 +175,7 @@ export const insertMedicationsSchema = createInsertSchema(medications, {
   updatedAt: true,
 });
 
-export const patchMedicationsSchema = insertMedicationsSchema.partial();
+export const patchMedicationSchema = insertMedicationSchema.partial();
 
 /** MEDICAL HISTORY */
 export const selectMedicalHistorySchema = createSelectSchema(medicalHistory);

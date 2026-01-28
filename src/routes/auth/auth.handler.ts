@@ -8,7 +8,7 @@ import type {
 import * as HttpStatusCodes from 'stoker/http-status-codes';
 import db from '@/db';
 import { eq } from 'drizzle-orm';
-import { users } from '@/db/schema';
+import { user } from '@/db/schema';
 import { authService } from '@/services/auth.service';
 
 export const register: AppRouteHandler<RegisterRoute> = async (c) => {
@@ -16,8 +16,8 @@ export const register: AppRouteHandler<RegisterRoute> = async (c) => {
     const { user: userData, patient: patientData } = await c.req.json();
 
     // Check if username already exists
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.username, userData.username),
+    const existingUser = await db.query.user.findFirst({
+      where: eq(user.username, userData.username),
     });
 
     if (existingUser) {
@@ -49,8 +49,8 @@ export const registerAdmin: AppRouteHandler<RegisterAdminRoute> = async (c) => {
     const userData = await c.req.json();
 
     // Check if username already exists
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.username, userData.username),
+    const existingUser = await db.query.user.findFirst({
+      where: eq(user.username, userData.username),
     });
 
     if (existingUser) {

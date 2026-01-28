@@ -1,7 +1,7 @@
 import {
-  insertPatientsSchema,
-  patchPatientsSchema,
-  selectPatientsSchema,
+  insertPatientSchema,
+  patchPatientSchema,
+  selectPatientSchema,
 } from '@/db/schema';
 import { notFoundSchema } from '@/lib/constants';
 import { createRoute, z } from '@hono/zod-openapi';
@@ -21,7 +21,7 @@ export const list = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectPatientsSchema),
+      z.array(selectPatientSchema),
       'The list of patients'
     ),
   },
@@ -31,16 +31,16 @@ export const create = createRoute({
   path: '/patients',
   method: 'post',
   request: {
-    body: jsonContentRequired(insertPatientsSchema, 'The patients to create'),
+    body: jsonContentRequired(insertPatientSchema, 'The patients to create'),
   },
   tags,
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(
-      selectPatientsSchema,
+      selectPatientSchema,
       'The created patient'
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertPatientsSchema),
+      createErrorSchema(insertPatientSchema),
       'The validation error'
     ),
   },
@@ -60,7 +60,7 @@ export const getOne = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectPatientsSchema,
+      selectPatientSchema,
       'The requested patient'
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -84,12 +84,12 @@ export const patch = createRoute({
         example: '1',
       }),
     }),
-    body: jsonContentRequired(patchPatientsSchema, 'The patient updates'),
+    body: jsonContentRequired(patchPatientSchema, 'The patient updates'),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectPatientsSchema,
+      selectPatientSchema,
       'The requested patient'
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -98,7 +98,7 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
       [
-        createErrorSchema(patchPatientsSchema),
+        createErrorSchema(patchPatientSchema),
         createErrorSchema(IdParamsSchema),
       ],
       'Invalid id error'

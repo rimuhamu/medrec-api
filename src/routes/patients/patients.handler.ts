@@ -9,60 +9,60 @@ import type {
 import * as HttpStatusCodes from 'stoker/http-status-codes';
 import * as HttpStatusPhrases from 'stoker/http-status-phrases';
 import type { AppRouteHandler } from '@/lib/types';
-import { patients } from '@/db/schema';
+import { patient } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const patients = await db.query.patients.findMany();
-  return c.json(patients);
+  const allPatients = await db.query.patient.findMany();
+  return c.json(allPatients);
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
-  const patient = await c.req.json();
-  const [inserted] = await db.insert(patients).values(patient).returning();
+  const patientData = await c.req.json();
+  const [inserted] = await db.insert(patient).values(patientData).returning();
   return c.json(inserted, HttpStatusCodes.CREATED);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const id = parseInt(c.req.param('id'));
-  const patient = await db.query.patients.findFirst({
+  const foundPatient = await db.query.patient.findFirst({
     where(fields, operator) {
       return operator.eq(fields.id, id);
     },
   });
 
-  if (!patient)
+  if (!foundPatient)
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
       },
       HttpStatusCodes.NOT_FOUND
     );
-  return c.json(patient, HttpStatusCodes.OK);
+  return c.json(foundPatient, HttpStatusCodes.OK);
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const id = parseInt(c.req.param('id'));
   const updates = await c.req.json();
-  const [patient] = await db
-    .update(patients)
+  const [updatedPatient] = await db
+    .update(patient)
     .set(updates)
-    .where(eq(patients.id, id))
+    .where(eq(patient.id, id))
     .returning();
 
-  if (!patient)
+  if (!updatedPatient)
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
       },
       HttpStatusCodes.NOT_FOUND
     );
-  return c.json(patient, HttpStatusCodes.OK);
+  return c.json(updatedPatient, HttpStatusCodes.OK);
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const id = parseInt(c.req.param('id'));
-  const result = await db.delete(patients).where(eq(patients.id, id));
+  const result = await db.delete(patient).where(eq(patient.id, id));
 
   if (result.rowsAffected === 0)
     return c.json(

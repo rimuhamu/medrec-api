@@ -1,4 +1,4 @@
-import { users, patients, UserRole } from '@/db/schema';
+import { user, patient, UserRole } from '@/db/schema';
 import db from '@/db';
 import { genSalt, hash, compare } from 'bcrypt-ts';
 import jwt, { type Secret, type SignOptions } from 'jsonwebtoken';
@@ -43,33 +43,33 @@ export class AuthService {
   ): Promise<{ user: any; token: string }> {
     const hashedPassword = await this.hashPassword(password);
     return await db.transaction(async (tx) => {
-      const [patient] = await tx
-        .insert(patients)
+      const [newPatient] = await tx
+        .insert(patient)
         .values(patientData)
         .returning();
-      console.log('PATIENT CREATED: ', patient);
-      const [user] = await tx
-        .insert(users)
+      console.log('PATIENT CREATED: ', newPatient);
+      const [newUser] = await tx
+        .insert(user)
         .values({
           username,
           password: hashedPassword,
           role: UserRole.USER,
-          patientId: patient.id,
+          patientId: newPatient.id,
         })
         .returning({
-          id: users.id,
-          username: users.username,
-          role: users.role,
-          patientId: users.patientId,
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          patientId: user.patientId,
         });
-      console.log('USER CREATED: ', user);
+      console.log('USER CREATED: ', newUser);
       const token = this.generateToken({
-        id: user.id,
-        username: user.username,
-        role: user.role,
+        id: newUser.id,
+        username: newUser.username,
+        role: newUser.role,
       });
 
-      return { user, token };
+      return { user: newUser, token };
     });
   }
 
@@ -79,50 +79,50 @@ export class AuthService {
   ): Promise<{ user: any; token: string }> {
     const hashedPassword = await this.hashPassword(password);
 
-    const [user] = await db
-      .insert(users)
+    const [newUser] = await db
+      .insert(user)
       .values({
         username,
         password: hashedPassword,
         role: UserRole.ADMIN,
       })
       .returning({
-        id: users.id,
-        username: users.username,
-        role: users.role,
+        id: user.id,
+        username: user.username,
+        role: user.role,
       });
-    console.log('ADMIN CREATED: ', user);
+    console.log('ADMIN CREATED: ', newUser);
 
     const token = this.generateToken({
-      id: user.id,
-      username: user.username,
-      role: user.role,
+      id: newUser.id,
+      username: newUser.username,
+      role: newUser.role,
     });
 
-    return { user, token };
+    return { user: newUser, token };
   }
 
   async login(
     username: string,
     password: string
   ): Promise<{ user: any; token: string } | null> {
-    const user = await db.query.users.findFirst({
-      where: eq(users.username, username),
+    const foundUser = await db.query.user.findFirst({
+      where: eq(user.username, username),
     });
 
-    if (!user) return null;
+    if (!foundUser) return null;
 
-    const passwordValid = await this.verifyPassword(password, user.password);
+    const passwordValid = await this.verifyPassword(password, foundUser.password);
 
     if (!passwordValid) return null;
 
     const token = this.generateToken({
-      id: user.id,
-      username: user.username,
-      role: user.role,
+      id: foundUser.id,
+      username: foundUser.username,
+      role: foundUser.role,
     });
 
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = foundUser;
     return { user: userWithoutPassword, token };
   }
 
@@ -155,16 +155,16 @@ export class AuthService {
 
     console.log(`Looking up user with ID: ${userId}`);
 
-    const foundUser = await db.query.users.findFirst({
-      where: eq(users.id, userId),
+    const result = await db.query.user.findFirst({
+      where: eq(user.id, userId),
       with: {
         patient: true,
       },
     });
 
-    if (!foundUser) return null;
+    if (!result) return null;
 
-    const { password, ...userWithoutPassword } = foundUser;
+    const { password, ...userWithoutPassword } = result;
     return userWithoutPassword;
   }
 }

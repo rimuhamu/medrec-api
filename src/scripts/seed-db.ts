@@ -1,11 +1,11 @@
 import { authService } from "@/services/auth.service";
 import db from "@/db";
 import {
-  users,
-  patients,
-  medications,
+  user,
+  patient,
+  medication,
   medicalHistory,
-  diagnosticTestResults,
+  diagnosticTestResult,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -183,10 +183,10 @@ async function isDatabaseEmpty(): Promise<boolean> {
   try {
     const [userCount] = await db
       .select({ count: sql<number>`count(*)` })
-      .from(users);
+      .from(user);
     const [patientCount] = await db
       .select({ count: sql<number>`count(*)` })
-      .from(patients);
+      .from(patient);
 
     // If both users and patients tables are empty, database is considered empty
     return userCount.count === 0 && patientCount.count === 0;
@@ -209,19 +209,19 @@ async function clearDatabase() {
 
   try {
     console.log("🗑️  Deleting all records...");
-    await db.delete(diagnosticTestResults);
-    await db.delete(medications);
+    await db.delete(diagnosticTestResult);
+    await db.delete(medication);
     await db.delete(medicalHistory);
-    await db.delete(users);
-    await db.delete(patients);
+    await db.delete(user);
+    await db.delete(patient);
 
     console.log("🔄 Resetting ID sequences...");
     await db.run(sql`DELETE FROM sqlite_sequence WHERE name='users'`);
     await db.run(sql`DELETE FROM sqlite_sequence WHERE name='patients'`);
-    await db.run(sql`DELETE FROM sqlite_sequence WHERE name='medication'`);
-    await db.run(sql`DELETE FROM sqlite_sequence WHERE name='medical_history'`);
+    await db.run(sql`DELETE FROM sqlite_sequence WHERE name='medications'`);
+    await db.run(sql`DELETE FROM sqlite_sequence WHERE name='medical_histories'`);
     await db.run(
-      sql`DELETE FROM sqlite_sequence WHERE name='diagnostic_test_result'`,
+      sql`DELETE FROM sqlite_sequence WHERE name='diagnostic_test_results'`,
     );
     console.log("✅ Database reset complete! IDs will start from 1.");
   } catch (error) {
@@ -263,7 +263,7 @@ async function seedDatabase() {
       }
     }
 
-    const allPatients = await db.query.patients.findMany();
+    const allPatients = await db.query.patient.findMany();
     console.log(`\n📊 Found ${allPatients.length} patients in database\n`);
 
     console.log("💊 Creating medications...");
@@ -273,7 +273,7 @@ async function seedDatabase() {
 
       for (const med of patientMeds) {
         try {
-          await db.insert(medications).values({
+          await db.insert(medication).values({
             ...med,
             patientId,
           });
@@ -321,7 +321,7 @@ async function seedDatabase() {
 
       for (const test of testResults) {
         try {
-          await db.insert(diagnosticTestResults).values({
+          await db.insert(diagnosticTestResult).values({
             ...test,
             patientId,
           });
@@ -340,9 +340,9 @@ async function seedDatabase() {
     console.log("\n📝 Summary:");
     console.log(`   • Patients: ${allPatients.length}`);
 
-    const medicationCount = await db.query.medications.findMany();
+    const medicationCount = await db.query.medication.findMany();
     const historyCount = await db.query.medicalHistory.findMany();
-    const testCount = await db.query.diagnosticTestResults.findMany();
+    const testCount = await db.query.diagnosticTestResult.findMany();
 
     console.log(`   • Medications: ${medicationCount.length}`);
     console.log(`   • Medical histories: ${historyCount.length}`);
